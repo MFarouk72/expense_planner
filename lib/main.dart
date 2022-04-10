@@ -17,24 +17,26 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-          primarySwatch: Colors.purple,
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            secondary: Colors.amber,
+        primarySwatch: Colors.purple,
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: Colors.amber,
+        ),
+        fontFamily: "Quicksand",
+        textTheme: const TextTheme(
+          headline1: TextStyle(
+            color: Colors.purple,
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
-          fontFamily: "Quicksand",
-          textTheme: const TextTheme(
-            headline1: TextStyle(
-              color: Colors.purple,
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-          appBarTheme: const AppBarTheme(
-              titleTextStyle: TextStyle(
-                  fontFamily: "OpenSans",
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold))),
+        ),
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              fontFamily: "OpenSans",
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+      ),
       home: const MyHomePage(),
     );
   }
@@ -79,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String title, double amount , DateTime chosenDate) {
+  void _addNewTransaction(String title, double amount, DateTime chosenDate) {
     final newTransaction = Transaction(
         id: DateTime.now().toString(),
         title: title,
@@ -99,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     _userTransactions.removeWhere((transaction) {
       return transaction.id == id;
     });
