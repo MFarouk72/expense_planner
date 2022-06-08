@@ -2,10 +2,19 @@ import 'package:expense_planner/models/transaction.dart';
 import 'package:expense_planner/widgets/chart.dart';
 import 'package:expense_planner/widgets/new_transaction.dart';
 import 'package:expense_planner/widgets/transaction_list.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+
+ /*
+ // to disable rotation
+ WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  */
   runApp(const MyApp());
 }
 
@@ -70,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //   date: DateTime.now(),
     // ),
   ];
-
+  bool _showChart = false;
   List<Transaction> get recentTransaction {
     return _userTransactions.where((element) {
       return element.date.isAfter(
@@ -102,13 +111,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _deleteTransaction(String id) {
-    _userTransactions.removeWhere((transaction) {
-      return transaction.id == id;
+    setState(() {
+      _userTransactions.removeWhere((transaction) {
+        return transaction.id == id;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isLandScape= mediaQuery.orientation == Orientation.landscape;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -125,11 +138,31 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Chart(recentTransaction: recentTransaction),
-            TransactionList(
-              transactions: _userTransactions,
-              deleteTransaction: _deleteTransaction,
+            if(isLandScape) Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+               const Text("Show Chart"),
+                Switch(value: _showChart, onChanged: (value){
+                  setState(() {
+                    _showChart = value;
+                  });
+                })
+              ],
             ),
+            if(!isLandScape) Column(
+              children: [
+                SizedBox(
+                    height: mediaQuery.size.height * 0.3,
+                    child: Chart(recentTransaction: recentTransaction)),
+                txtList(mediaQuery),
+              ],
+            ),
+            if(isLandScape)
+            _showChart? SizedBox(
+                height: mediaQuery.size.height * 0.6,
+                child: Chart(recentTransaction: recentTransaction))
+            :
+            txtList(mediaQuery),
           ],
         ),
       ),
@@ -139,6 +172,16 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           startAddNewTransaction(context);
         },
+      ),
+    );
+  }
+
+  Widget txtList(var mediaQuery){
+    return SizedBox(
+      height: mediaQuery.size.height * 0.6,
+      child: TransactionList(
+        transactions: _userTransactions,
+        deleteTransaction: _deleteTransaction,
       ),
     );
   }
